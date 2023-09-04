@@ -74,6 +74,13 @@ void pop()
         top--;
     }
 }
+void peek(){
+    if(top<=-1){
+        printf("underflow");
+    }else{
+        print("%d",stack[top]);
+    }
+}
 void display()
 {
     if(top>=0)
