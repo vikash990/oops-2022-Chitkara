@@ -1,135 +1,71 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define bool int
 
-// structure of a stack node
-struct sNode {
-	char data;
-	struct sNode* next;
-};
+#define MAX 100
 
+struct stack {
+  char stck[MAX];
+  int top;
+}s;
 
-void push(struct sNode** top_ref, int new_data);
+void push(char item) {
+  if (s.top == (MAX - 1))
+    printf("Stack is Full\n");
 
-// Function to pop an item from stack
-int pop(struct sNode** top_ref);
-
-// Returns 1 if character1 and character2 are matching left
-// and right Brackets
-bool isMatchingPair(char character1, char character2)
-{
-	if (character1 == '(' && character2 == ')')
-		return 1;
-	else if (character1 == '{' && character2 == '}')
-		return 1;
-	else if (character1 == '[' && character2 == ']')
-		return 1;
-	else
-		return 0;
+  else {
+    s.top = s.top + 1;
+    s.stck[s.top] = item;
+  }
 }
 
-// Return 1 if expression has balanced Brackets
-bool areBracketsBalanced(char exp[])
-{
-	int i = 0;
+void pop() {
+  if (s.top == -1)
+    printf("Stack is Empty\n");
 
-	// Declare an empty character stack
-	struct sNode* stack = NULL;
-
-	// Traverse the given expression to check matching
-	// brackets
-	while (exp[i])
-	{
-		// If the exp[i] is a starting bracket then push
-		// it
-		if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
-			push(&stack, exp[i]);
-
-		// If exp[i] is an ending bracket then pop from
-		// stack and check if the popped bracket is a
-		// matching pair*/
-		if (exp[i] == '}' || exp[i] == ')'
-			|| exp[i] == ']') {
-
-			// If we see an ending bracket without a pair
-			// then return false
-			if (stack == NULL)
-				return 0;
-
-			// Pop the top element from stack, if it is not
-			// a pair bracket of character then there is a
-			// mismatch.
-			// his happens for expressions like {(})
-			else if (!isMatchingPair(pop(&stack), exp[i]))
-				return 0;
-		}
-		i++;
-	}
-
-	// If there is something left in expression then there
-	// is a starting bracket without a closing
-	// bracket
-	if (stack == NULL)
-		return 1; // balanced
-	else
-		return 0; // not balanced
+  else
+    s.top = s.top - 1;
 }
 
-// Driver code
-int main()
-{
-	char exp[100] = "{()}[]";
-
-	// Function call
-	if (areBracketsBalanced(exp))
-		printf("Balanced
-");
-	else
-		printf("Not Balanced
-");
-	return 0;
+int checkPair(char val1,char val2){
+    return (( val1=='(' && val2==')' )||( val1=='[' && val2==']' )||( val1=='{' && val2=='}' ));
 }
 
-// Function to push an item to stack
-void push(struct sNode** top_ref, int new_data)
-{
-	// allocate node
-	struct sNode* new_node
-		= (struct sNode*)malloc(sizeof(struct sNode));
-
-	if (new_node == NULL) {
-		printf("Stack overflow n");
-		getchar();
-		exit(0);
-	}
-
-	// put in the data
-	new_node->data = new_data;
-
-	// link the old list of the new node
-	new_node->next = (*top_ref);
-
-	// move the head to point to the new node
-	(*top_ref) = new_node;
+int checkBalanced(char expr[], int len){
+      
+    for (int i = 0; i < len; i++)  
+    { 
+        if (expr[i] == '(' || expr[i] == '[' || expr[i] == '{')  
+        {  
+          push(expr[i]); 
+        } 
+        else
+        {
+            // exp = {{}}}
+            // if you look closely above {{}} will be matched with pair, Thus, stack "Empty"
+            //but an extra closing parenthesis like '}' will never be matched
+            //so there is no point looking forward
+        if (s.top == -1) 
+            return 0;
+        else if(checkPair(s.stck[s.top],expr[i]))
+        {
+            pop();
+            continue;
+        }
+        // will only come here if stack is not empty
+        // pair wasn't found and it's some closing parenthesis
+        //Example : {{}}(]
+        return 0;
+        }
+    }    
+    return 1; 
 }
+int main() {
+  char exp[MAX] = "({})[]{}";
+  int i = 0;
+  s.top = -1;
 
-// Function to pop an item from stack
-int pop(struct sNode** top_ref)
-{
-	char res;
-	struct sNode* top;
+  int len = strlen(exp);
+  checkBalanced(exp, len)?printf("Balanced"): printf("Not Balanced"); 
 
-	// If stack is empty then error
-	if (*top_ref == NULL) {
-		printf("Stack overflow n");
-		getchar();
-		exit(0);
-	}
-	else {
-		top = *top_ref;
-		res = top->data;
-		*top_ref = top->next;
-		free(top);
-		return res;
-	}
+  return 0;
 }
