@@ -40,10 +40,6 @@ int checkBalanced(char expr[], int len){
         } 
         else
         {
-            // exp = {{}}}
-            // if you look closely above {{}} will be matched with pair, Thus, stack "Empty"
-            //but an extra closing parenthesis like '}' will never be matched
-            //so there is no point looking forward
         if (s.top == -1) 
             return 0;
         else if(checkPair(s.stck[s.top],expr[i]))
